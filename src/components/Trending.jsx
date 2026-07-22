@@ -8,7 +8,7 @@ import Loading from "./Loading";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 const Trending = () => {
-  document.title = "MOVIES | Trending";
+  document.title = "SCSDB | Trending";
   const navigate = useNavigate();
   const [category, setcategory] = useState("all");
   const [duration, setduration] = useState("day");

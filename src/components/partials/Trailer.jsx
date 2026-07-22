@@ -9,7 +9,7 @@ const Trailer = () => {
   const { pathname } = useLocation();
   const category = pathname.includes("movie") ? "movie" : "tv";
   const ytvideo = useSelector((state) => state[category].info.videos);
-  ytvideo && ytvideo.name && (document.title = "MOVIES | " + ytvideo.name);
+  ytvideo && ytvideo.name && (document.title = "SCSDB | " + ytvideo.name);
   return (
     <div className="bg-[rgba(0,0,0,.9)] absolute z-[100] top-0 left-0 w-screen h-screen flex items-center justify-center">
       <Link
@@ -18,10 +18,10 @@ const Trailer = () => {
       ></Link>
       {ytvideo ? (
         <ReactPlayer
+          src={`https://www.youtube.com/watch?v=${ytvideo.key}`}
           controls
-          height={800}
-          width={1500}
-          url={`https://www.youtube.com/watch?v=${ytvideo.key}`}
+          width="80%"
+          height="80%"
         />
       ) : (
         <NotFound />

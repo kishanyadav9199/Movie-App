@@ -8,7 +8,7 @@ import Dropdown from "./partials/Dropdown";
 import Loading from "./Loading";
 
 const Home = () => {
-  document.title = "MOVIES | Homepage";
+  document.title = "SCSDB | Homepage";
   const [wallpaper, setwallpaper] = useState(null);
   const [trending, settrending] = useState(null);
   const [category, setcategory] = useState("all");
@@ -47,7 +47,7 @@ const Home = () => {
         <div className="flex justify-between p-5">
           <h1 className="text-3xl font-semibold text-zinc-400">Trending</h1>
 
-          <Dropdown 
+          <Dropdown
             title="Filter"
             options={["tv", "movie", "all"]}
             func={(e) => setcategory(e.target.value)}

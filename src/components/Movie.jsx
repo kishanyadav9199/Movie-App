@@ -8,7 +8,7 @@ import Dropdown from "./partials/Dropdown";
 import Cards from "./partials/Cards";
 
 const Movie = () => {
-  document.title = "MOVIES | Movies";
+  document.title = "SCSDB | Movies";
 
   const navigate = useNavigate();
   const [category, setcategory] = useState("now_playing");

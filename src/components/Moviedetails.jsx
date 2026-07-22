@@ -12,9 +12,11 @@ import HorizontalCards from "./partials/HorizontalCards";
 import Loading from "./Loading";
 
 const Moviedetails = () => {
-  document.title = "MOVIES | Movie Details";
+  document.title = "SCSDB | Movie Details";
 
   const { pathname } = useLocation();
+  console.log(pathname);
+  
   const navigate = useNavigate();
   const { id } = useParams();
   const { info } = useSelector((state) => state.movie);
@@ -105,6 +107,7 @@ const Moviedetails = () => {
 
           <Link
             className="p-5 bg-[#6556CD] rounded-lg"
+            log
             to={`${pathname}/trailer`}
           >
             <i className="text-xl ri-play-fill mr-3 "></i>
