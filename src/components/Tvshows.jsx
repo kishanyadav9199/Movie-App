@@ -8,75 +8,88 @@ import Dropdown from "./partials/Dropdown";
 import Cards from "./partials/Cards";
 
 const Tvshows = () => {
-  document.title = "SCSDB | Tv Shows";
+  document.title = "MovieZone | TV Shows";
 
   const navigate = useNavigate();
-  const [category, setcategory] = useState("airing_today");
-  const [tv, settv] = useState([]);
-  const [page, setpage] = useState(1);
-  const [hasMore, sethasMore] = useState(true);
 
-  const GetTv = async () => {
+  const [category, setCategory] = useState("airing_today");
+  const [tv, setTv] = useState([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  const getTvShows = async (pageNo = page) => {
     try {
-      const { data } = await axios.get(`/tv/${category}?page=${page}`);
+      const { data } = await axios.get(`/tv/${category}?page=${pageNo}`);
+
       if (data.results.length > 0) {
-        settv((prevState) => [...prevState, ...data.results]);
-        setpage(page + 1);
+        setTv((prev) => [...prev, ...data.results]);
+        setPage((prev) => prev + 1);
       } else {
-        sethasMore(false);
+        setHasMore(false);
       }
     } catch (error) {
-      console.log("Error: ", error);
-    }
-  };
-
-  const refershHandler = () => {
-    if (tv.length === 0) {
-      GetTv();
-    } else {
-      setpage(1);
-      settv([]);
-      GetTv();
+      console.log("Error:", error);
     }
   };
 
   useEffect(() => {
-    refershHandler();
+    setTv([]);
+    setPage(1);
+    setHasMore(true);
+
+    getTvShows(1);
   }, [category]);
 
-  return tv.length > 0 ? (
-    <div className="w-screen h-screen ">
-      <div className=" px-[5%] w-full flex items-center justify-between ">
-        <h1 className=" text-2xl font-semibold text-zinc-400">
-          <i
+  if (tv.length === 0) {
+    return <Loading />;
+  }
+
+  return (
+    <div className="min-h-screen bg-[#1F1E24]">
+      {/* Header */}
+      <div className="px-4 sm:px-6 md:px-10 py-5 flex flex-col lg:flex-row justify-between gap-5">
+        {/* Left */}
+        <div className="flex items-center flex-wrap gap-2">
+          <button
             onClick={() => navigate(-1)}
-            className="hover:text-[#6556CD] ri-arrow-left-line"
-          ></i>{" "}
-          Tv Shows
-          <small className="ml-2 text-sm text-zinc-600">({category})</small>
-        </h1>
-        <div className="flex items-center w-[80%]">
-          <Topnav />
+            className="text-3xl text-zinc-400 hover:text-[#6556CD] transition"
+          >
+            <i className="ri-arrow-left-line"></i>
+          </button>
+
+          <h1 className="text-2xl font-semibold text-zinc-300">TV Shows</h1>
+
+          <span className="text-sm text-zinc-500 capitalize">
+            ({category.replaceAll("_", " ")})
+          </span>
+        </div>
+
+        {/* Right */}
+        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 w-full lg:w-auto">
+          <div className="flex-1">
+            <Topnav />
+          </div>
+
           <Dropdown
             title="Category"
-            options={["on_the_air", "popular", "top_rated", "airing_today"]}
-            func={(e) => setcategory(e.target.value)}
+            options={["airing_today", "on_the_air", "popular", "top_rated"]}
+            func={(e) => setCategory(e.target.value)}
           />
-          <div className="w-[2%]"></div>
         </div>
       </div>
 
+      {/* TV Shows */}
       <InfiniteScroll
         dataLength={tv.length}
-        next={GetTv}
+        next={getTvShows}
         hasMore={hasMore}
-        loader={<h1>Loading...</h1>}
+        loader={
+          <h1 className="text-center text-white py-6 text-lg">Loading...</h1>
+        }
       >
         <Cards data={tv} title="tv" />
       </InfiniteScroll>
     </div>
-  ) : (
-    <Loading />
   );
 };
 

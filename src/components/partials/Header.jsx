@@ -2,42 +2,58 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const Header = ({ data }) => {
-  // console.log(data);
   return (
     <div
       style={{
-        background: `linear-gradient(rgba(0,0,0,.2),rgba(0,0,0,.5), rgba(0,0,0,.8)), url(https://image.tmdb.org/t/p/original/${
+        background: `linear-gradient(
+          rgba(0,0,0,.2),
+          rgba(0,0,0,.5),
+          rgba(0,0,0,.9)
+        ),
+        url(https://image.tmdb.org/t/p/original/${
           data.backdrop_path || data.profile_path
         })`,
-        backgroundPosition: "center",
+        backgroundPosition:"center",
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
       }}
-      className="w-full h-[50vh] flex flex-col justify-end items-start p-[5%]"
+      className="w-full min-h-[60vh] md:h-[70vh] flex flex-col justify-end px-5 sm:px-8 md:px-12 lg:px-20 py-8"
     >
-      <h1 className="w-[70%] text-5xl font-black text-white">
+      {/* Title */}
+      <h1 className="w-full md:w-[75%] text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight">
         {data.name || data.title || data.original_name || data.original_title}
       </h1>
-      <p className="w-[70%] mt-3 mb-3 text-white">
-        {data.overview.slice(0, 200)}...
+
+      {/* Overview */}
+      <p className="w-full md:w-[75%] mt-4 text-sm sm:text-base md:text-lg text-gray-200 leading-relaxed">
+        {data.overview?.slice(0, 200)}...
         <Link
           to={`/${data.media_type}/details/${data.id}`}
-          className="text-blue-400"
+          className="ml-2 text-blue-400 hover:text-blue-300"
         >
           more
         </Link>
       </p>
-      <p className="text-white  ">
-        <i className="text-yellow-500 ri-megaphone-fill"></i>{" "}
-        {data.release_date || "No Information"}
-        <i className="ml-5 text-yellow-500 ri-album-fill"></i>{" "}
-        {data.media_type.toUpperCase()}
-      </p>
+
+      {/* Info */}
+      <div className="flex flex-wrap items-center gap-4 mt-4 text-sm sm:text-base text-white">
+        <span>
+          <i className="ri-megaphone-fill text-yellow-500 mr-2"></i>
+          {data.release_date || "No Information"}
+        </span>
+
+        <span>
+          <i className="ri-album-fill text-yellow-500 mr-2"></i>
+          {data.media_type?.toUpperCase()}
+        </span>
+      </div>
+
+      {/* Button */}
       <Link
         to={`/${data.media_type}/details/${data.id}/trailer`}
-        className="mt-5 bg-[#6556CD] p-4 rounded text-white "
+        className="mt-6 w-fit bg-[#6556CD] hover:bg-[#5447b8] transition px-6 py-3 rounded-lg text-white font-semibold"
       >
-        Watch Trailer
+        ▶ Watch Trailer
       </Link>
     </div>
   );

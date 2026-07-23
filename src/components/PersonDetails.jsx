@@ -1,166 +1,255 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { asyncloadperson, removeperson } from "../store/actions/personActions";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import HorizontalCards from "./partials/HorizontalCards";
 import Loading from "./Loading";
 import Dropdown from "./partials/Dropdown";
 
 const PersonDetails = () => {
-  document.title = "SCSDB | Person Details";
+  document.title = "MovieZone | Person Details";
 
-  const { pathname } = useLocation();
   const navigate = useNavigate();
   const { id } = useParams();
-  const { info } = useSelector((state) => state.person);
+
   const dispatch = useDispatch();
-  const [category, setcategory] = useState("movie");
+
+  const { info } = useSelector((state) => state.person);
+
+  const [category, setCategory] = useState("movie");
 
   useEffect(() => {
     dispatch(asyncloadperson(id));
+
     return () => {
       dispatch(removeperson());
     };
-  }, [id]);
+  }, [dispatch, id]);
 
-  return info ? (
-    <div className="px-[10%] w-screen h-[150vh] bg-[#1F1E24] ">
-      {/* Part 1 navigation */}
-      <nav className="h-[10vh] w-full text-zinc-100 flex items-center gap-10 text-xl ">
-        <Link
+  if (!info) return <Loading />;
+
+  return (
+    <div className="min-h-screen w-full bg-[#1F1E24] px-4 sm:px-8 lg:px-16 py-6">
+      {/* ================= Navigation ================= */}
+
+      <nav className="flex items-center mb-8">
+        <button
           onClick={() => navigate(-1)}
-          className="hover:text-[#6556CD] ri-arrow-left-line"
-        ></Link>
+          className="text-3xl text-white hover:text-[#6556CD] transition"
+        >
+          <i className="ri-arrow-left-line"></i>
+        </button>
       </nav>
 
-      <div className="w-full flex ">
-        {/* Part 2 left Poster and Details */}
-        <div className="w-[20%] ">
+      {/* ================= Main Layout ================= */}
+
+      <div className="flex flex-col lg:flex-row gap-10">
+        {/* ================= Left Section ================= */}
+
+        <div className="w-full lg:w-1/4">
+          {/* Poster */}
+
           <img
-            className="shadow-[8px_17px_38px_2px_rgba(0,0,0,.5)] h-[35vh] object-cover"
+            className="w-full max-w-[320px] mx-auto rounded-xl shadow-2xl object-cover"
             src={`https://image.tmdb.org/t/p/original/${info.detail.profile_path}`}
-            alt=""
+            alt={info.detail.name}
           />
-          <hr className="mt-10 mb-5 border-none h-[2px] bg-zinc-500" />
-          {/* Sosial Media Links */}
-          <div className="text-2xl text-white flex gap-x-5">
-            <a
-              target="_blank"
-              href={`https://www.wikidata.org/wiki/${info.externalid.wikidata_id}`}
-            >
-              <i className="ri-earth-fill"></i>
-            </a>
 
-            <a
-              target="_blank"
-              href={`https://www.facebook.com/${info.externalid.facebook_id}`}
-            >
-              <i className="ri-facebook-circle-fill"></i>
-            </a>
+          <hr className="my-8 border-zinc-700" />
 
-            <a
-              target="_blank"
-              href={`https://www.instagram.com/${info.externalid.instagram_id}`}
-            >
-              <i className="ri-instagram-fill"></i>
-            </a>
-            <a
-              target="_blank"
-              href={`https://twitter.com/${info.externalid.twitter_id}`}
-            >
-              <i className="ri-twitter-x-fill"></i>
-            </a>
+          {/* Social Links */}
+
+          <div className="flex flex-wrap justify-center lg:justify-start gap-5 text-3xl text-white">
+            {info.externalid?.wikidata_id && (
+              <a
+                href={`https://www.wikidata.org/wiki/${info.externalid.wikidata_id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-[#6556CD]"
+              >
+                <i className="ri-earth-fill"></i>
+              </a>
+            )}
+
+            {info.externalid?.facebook_id && (
+              <a
+                href={`https://www.facebook.com/${info.externalid.facebook_id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-[#6556CD]"
+              >
+                <i className="ri-facebook-circle-fill"></i>
+              </a>
+            )}
+
+            {info.externalid?.instagram_id && (
+              <a
+                href={`https://www.instagram.com/${info.externalid.instagram_id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-[#6556CD]"
+              >
+                <i className="ri-instagram-fill"></i>
+              </a>
+            )}
+
+            {info.externalid?.twitter_id && (
+              <a
+                href={`https://twitter.com/${info.externalid.twitter_id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-[#6556CD]"
+              >
+                <i className="ri-twitter-x-fill"></i>
+              </a>
+            )}
           </div>
-          {/* Personal Information */}
-          <h1 className="text-2xl text-zinc-400 font-semibold my-5">
-            Person Info
-          </h1>
 
-          <h1 className="text-lg text-zinc-400 font-semibold ">Known For</h1>
-          <h1 className=" text-zinc-400 ">
-            {info.detail.known_for_department}
-          </h1>
+          {/* Personal Info */}
 
-          <h1 className="text-lg text-zinc-400 font-semibold mt-3 ">Gender</h1>
-          <h1 className=" text-zinc-400 ">
-            {info.detail.gender === 2 ? "Male" : "Female"}
-          </h1>
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold text-white mb-6">
+              Personal Information
+            </h2>
 
-          <h1 className="text-lg text-zinc-400 font-semibold mt-3 ">
-            Birthday
-          </h1>
-          <h1 className=" text-zinc-400 ">{info.detail.birthday}</h1>
+            <div className="space-y-5 text-zinc-300">
+              <div>
+                <h3 className="font-semibold text-white">Known For</h3>
+                <p>{info.detail.known_for_department}</p>
+              </div>
 
-          <h1 className="text-lg text-zinc-400 font-semibold mt-3 ">
-            Deathday
-          </h1>
-          <h1 className=" text-zinc-400 ">
-            {info.detail.deathday ? info.detail.deathday : "Still Alive"}
-          </h1>
+              <div>
+                <h3 className="font-semibold text-white">Gender</h3>
 
-          <h1 className="text-lg text-zinc-400 font-semibold mt-3 ">
-            Place Of Birth
-          </h1>
-          <h1 className=" text-zinc-400 ">{info.detail.place_of_birth}</h1>
+                <p>
+                  {info.detail.gender === 2
+                    ? "Male"
+                    : info.detail.gender === 1
+                      ? "Female"
+                      : "Not Specified"}
+                </p>
+              </div>
 
-          <h1 className="text-lg text-zinc-400 font-semibold mt-3 ">
-            Also Known As
-          </h1>
-          <h1 className=" text-zinc-400 ">
-            {info.detail.also_known_as.join(", ")}
-          </h1>
+              <div>
+                <h3 className="font-semibold text-white">Birthday</h3>
+
+                <p>{info.detail.birthday || "Unknown"}</p>
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-white">Deathday</h3>
+
+                <p>{info.detail.deathday || "Still Alive"}</p>
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-white">Place of Birth</h3>
+
+                <p>{info.detail.place_of_birth || "Unknown"}</p>
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-white">Also Known As</h3>
+
+                <p className="leading-7">
+                  {info.detail.also_known_as?.join(", ")}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Part 3 right Details and information  */}
-        <div className="w-[80%] ml-[5%]">
-          <h1 className="text-6xl text-zinc-400 font-black my-5">
+        {/* ================= Right Section Starts ================= */}
+
+        <div className="flex-1">
+          {/* Person Name */}
+          <h1 className="text-3xl sm:text-4xl lg:text-6xl font-black text-white mb-6">
             {info.detail.name}
           </h1>
 
-          <h1 className="text-xl text-zinc-400 font-semibold ">Biography</h1>
-          <p className="text-zinc-400 mt-3 ">{info.detail.biography}</p>
+          {/* Biography */}
+          <div className="mb-10">
+            <h2 className="text-2xl font-semibold text-white mb-4">
+              Biography
+            </h2>
 
-          <h1 className="mt-5 text-lg text-zinc-400 font-semibold ">
-            Known For
-          </h1>
-          <HorizontalCards data={info.combinedCredits.cast} />
+            <p className="text-zinc-300 leading-8 whitespace-pre-line">
+              {info.detail.biography || "Biography not available."}
+            </p>
+          </div>
 
-          <div className="w-full flex justify-between">
-            <h1 className="mt-5 text-xl text-zinc-400 font-semibold ">
-              Acting
-            </h1>
+          {/* Known For */}
+          <div className="mb-10">
+            <h2 className="text-2xl font-semibold text-white mb-4">
+              Known For
+            </h2>
+
+            <HorizontalCards data={info.combinedCredits?.cast || []} />
+          </div>
+
+          {/* Acting Header */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-5">
+            <h2 className="text-2xl font-semibold text-white">
+              Acting Credits
+            </h2>
 
             <Dropdown
-              title="Catgory"
-              options={["tv", "movie"]}
-              func={(e) => setcategory(e.target.value)}
+              title="Category"
+              options={["movie", "tv"]}
+              func={(e) => setCategory(e.target.value)}
             />
           </div>
 
-          <div className="list-disc text-zinc-400 w-full h-[50vh] mt-5 overflow-x-hidden overflow-y-auto shadow-xl shadow-[rgba(255,255,255,.3)] border-2 border-zinc-700 p-5">
-            {info[category + "Credits"].cast.map((c, i) => (
-              <li
-                key={i}
-                className="hover:text-white p-5 rounded hover:bg-[#19191d]  duration-300 cursor-pointer"
-              >
-                <Link to={`/${category}/details/${c.id}`} className="">
-                  <span>
-                    {" "}
-                    {c.name || c.title || c.original_name || c.original_title}
-                  </span>
+          {/* Acting List */}
+          <div className="max-h-[500px] overflow-y-auto rounded-xl border border-zinc-700 bg-[#18181B] shadow-lg">
+            {info[`${category}Credits`]?.cast?.length > 0 ? (
+              <ul>
+                {info[`${category}Credits`].cast.map((credit, index) => (
+                  <li
+                    key={index}
+                    className="border-b border-zinc-700 last:border-none"
+                  >
+                    <Link
+                      to={`/${category}/details/${credit.id}`}
+                      className="block p-4 hover:bg-[#24242C] transition"
+                    >
+                      <h3 className="text-white font-semibold text-lg">
+                        {credit.name ||
+                          credit.title ||
+                          credit.original_name ||
+                          credit.original_title}
+                      </h3>
 
-                  <span className="block ml-5 mt-2">
-                    {c.character && `Character Name:  ${c.character}`}
-                  </span>
-                </Link>
-              </li>
-            ))}
+                      {credit.character && (
+                        <p className="text-zinc-400 mt-1 text-sm">
+                          Character: {credit.character}
+                        </p>
+                      )}
+
+                      {credit.release_date && (
+                        <p className="text-zinc-500 text-sm mt-1">
+                          Release: {credit.release_date}
+                        </p>
+                      )}
+
+                      {credit.first_air_date && (
+                        <p className="text-zinc-500 text-sm mt-1">
+                          First Air Date: {credit.first_air_date}
+                        </p>
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="p-8 text-center text-zinc-400">
+                No credits available.
+              </div>
+            )}
           </div>
         </div>
       </div>
     </div>
-  ) : (
-    <Loading />
   );
 };
 

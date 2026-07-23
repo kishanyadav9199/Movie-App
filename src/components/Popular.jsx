@@ -8,74 +8,84 @@ import Dropdown from "./partials/Dropdown";
 import Cards from "./partials/Cards";
 
 const Popular = () => {
-  document.title = "SCSDB | Popular";
+  document.title = "MovieZone | Popular";
 
   const navigate = useNavigate();
-  const [category, setcategory] = useState("movie");
-  const [popular, setpopular] = useState([]);
-  const [page, setpage] = useState(1);
-  const [hasMore, sethasMore] = useState(true);
 
-  const GetPopular = async () => {
+  const [category, setCategory] = useState("movie");
+  const [popular, setPopular] = useState([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  const getPopular = async (pageNo = page) => {
     try {
-      const { data } = await axios.get(`${category}/popular?page=${page}`);
+      const { data } = await axios.get(`/${category}/popular?page=${pageNo}`);
+
       if (data.results.length > 0) {
-        setpopular((prevState) => [...prevState, ...data.results]);
-        setpage(page + 1);
+        setPopular((prev) => [...prev, ...data.results]);
+        setPage((prev) => prev + 1);
       } else {
-        sethasMore(false);
+        setHasMore(false);
       }
     } catch (error) {
-      console.log("Error: ", error);
-    }
-  };
-
-  const refershHandler = () => {
-    if (popular.length === 0) {
-      GetPopular();
-    } else {
-      setpage(1);
-      setpopular([]);
-      GetPopular();
+      console.log(error);
     }
   };
 
   useEffect(() => {
-    refershHandler();
+    setPopular([]);
+    setPage(1);
+    setHasMore(true);
+
+    getPopular(1);
   }, [category]);
 
-  return popular.length > 0 ? (
-    <div className="w-screen h-screen ">
-      <div className=" px-[5%] w-full flex items-center justify-between ">
-        <h1 className=" text-2xl font-semibold text-zinc-400">
-          <i
+  if (popular.length === 0) {
+    return <Loading />;
+  }
+
+  return (
+    <div className="min-h-screen bg-[#1F1E24]">
+      {/* Header */}
+      <div className="px-4 sm:px-6 md:px-10 py-5 flex flex-col lg:flex-row justify-between gap-5">
+        {/* Left */}
+        <div className="flex items-center">
+          <button
             onClick={() => navigate(-1)}
-            className="hover:text-[#6556CD] ri-arrow-left-line"
-          ></i>{" "}
-          Popular
-        </h1>
-        <div className="flex items-center w-[80%]">
-          <Topnav />
+            className="text-3xl text-zinc-400 hover:text-[#6556CD] transition"
+          >
+            <i className="ri-arrow-left-line"></i>
+          </button>
+
+          <h1 className="ml-3 text-2xl font-semibold text-zinc-300">Popular</h1>
+        </div>
+
+        {/* Right */}
+        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 w-full lg:w-auto">
+          <div className="flex-1">
+            <Topnav />
+          </div>
+
           <Dropdown
             title="Category"
-            options={["tv", "movie"]}
-            func={(e) => setcategory(e.target.value)}
+            options={["movie", "tv"]}
+            func={(e) => setCategory(e.target.value)}
           />
-          <div className="w-[2%]"></div>
         </div>
       </div>
 
+      {/* Cards */}
       <InfiniteScroll
         dataLength={popular.length}
-        next={GetPopular}
+        next={getPopular}
         hasMore={hasMore}
-        loader={<h1>Loading...</h1>}
+        loader={
+          <h1 className="text-center text-white py-6 text-lg">Loading...</h1>
+        }
       >
         <Cards data={popular} title={category} />
       </InfiniteScroll>
     </div>
-  ) : (
-    <Loading />
   );
 };
 

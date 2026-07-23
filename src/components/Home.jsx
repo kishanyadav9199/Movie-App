@@ -8,56 +8,72 @@ import Dropdown from "./partials/Dropdown";
 import Loading from "./Loading";
 
 const Home = () => {
-  document.title = "SCSDB | Homepage";
-  const [wallpaper, setwallpaper] = useState(null);
-  const [trending, settrending] = useState(null);
-  const [category, setcategory] = useState("all");
+  document.title = "MovieZone | Homepage";
 
-  const GetHeaderWallpaper = async () => {
+  const [wallpaper, setWallpaper] = useState(null);
+  const [trending, setTrending] = useState(null);
+  const [category, setCategory] = useState("all");
+
+  const getHeaderWallpaper = async () => {
     try {
-      const { data } = await axios.get(`/trending/all/day`);
-      let randomdata =
-        data.results[(Math.random() * data.results.length).toFixed()];
-      setwallpaper(randomdata);
+      const { data } = await axios.get("/trending/all/day");
+      const randomData =
+        data.results[Math.floor(Math.random() * data.results.length)];
+      setWallpaper(randomData);
     } catch (error) {
-      console.log("Error: ", error);
+      console.log(error);
     }
   };
 
-  const GetTrending = async () => {
+  const getTrending = async () => {
     try {
       const { data } = await axios.get(`/trending/${category}/day`);
-      settrending(data.results);
+      setTrending(data.results);
     } catch (error) {
-      console.log("Error: ", error);
+      console.log(error);
     }
   };
 
   useEffect(() => {
-    GetTrending();
-    !wallpaper && GetHeaderWallpaper();
+    getTrending();
+
+    if (!wallpaper) {
+      getHeaderWallpaper();
+    }
   }, [category]);
 
-  return wallpaper && trending ? (
-    <>
+  if (!wallpaper || !trending) {
+    return <Loading />;
+  }
+
+  return (
+    <div className="flex min-h-screen bg-[#1F1E24]">
+      {/* Sidebar (hidden on mobile) */}
       <Sidenav />
-      <div className="w-[80%] h-full overflow-auto overflow-x-hidden">
-        <Topnav />
+
+      {/* Main Content */}
+      <main className="w-full md:ml-64 lg:ml-72 flex-1 overflow-x-hidden">
+     <div className="w-[80%]">
+    <Topnav />
+  </div>
+
         <Header data={wallpaper} />
-        <div className="flex justify-between p-5">
-          <h1 className="text-3xl font-semibold text-zinc-400">Trending</h1>
+
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 px-5 py-6">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-300">
+            Trending
+          </h1>
 
           <Dropdown
             title="Filter"
             options={["tv", "movie", "all"]}
-            func={(e) => setcategory(e.target.value)}
+            func={(e) => setCategory(e.target.value)}
           />
         </div>
+
         <HorizontalCards data={trending} />
-      </div>
-    </>
-  ) : (
-    <Loading />
+      </main>
+    </div>
   );
 };
 

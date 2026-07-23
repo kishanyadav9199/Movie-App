@@ -8,82 +8,95 @@ import Loading from "./Loading";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 const Trending = () => {
-  document.title = "SCSDB | Trending";
-  const navigate = useNavigate();
-  const [category, setcategory] = useState("all");
-  const [duration, setduration] = useState("day");
-  const [trending, settrending] = useState([]);
-  const [page, setpage] = useState(1);
-  const [hasMore, sethasMore] = useState(true);
+  document.title = "MovieZone | Trending";
 
-  const GetTrending = async () => {
+  const navigate = useNavigate();
+
+  const [category, setCategory] = useState("all");
+  const [duration, setDuration] = useState("day");
+  const [trending, setTrending] = useState([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  const getTrending = async (pageNo = page) => {
     try {
       const { data } = await axios.get(
-        `/trending/${category}/${duration}?page=${page}`,
+        `/trending/${category}/${duration}?page=${pageNo}`,
       );
 
       if (data.results.length > 0) {
-        settrending((prevState) => [...prevState, ...data.results]);
-        setpage(page + 1);
+        setTrending((prev) => [...prev, ...data.results]);
+        setPage((prev) => prev + 1);
       } else {
-        sethasMore(false);
+        setHasMore(false);
       }
     } catch (error) {
-      console.log("Error: ", error);
-    }
-  };
-
-  const refershHandler = () => {
-    if (trending.length === 0) {
-      GetTrending();
-    } else {
-      setpage(1);
-      settrending([]);
-      GetTrending();
+      console.log(error);
     }
   };
 
   useEffect(() => {
-    refershHandler();
+    setTrending([]);
+    setPage(1);
+    setHasMore(true);
+
+    getTrending(1);
   }, [category, duration]);
 
-  return trending.length > 0 ? (
-    <div className="w-screen h-screen ">
-      <div className=" px-[5%] w-full flex items-center justify-between ">
-        <h1 className=" text-2xl font-semibold text-zinc-400">
-          <i
+  if (trending.length === 0) {
+    return <Loading />;
+  }
+
+  return (
+    <div className="min-h-screen bg-[#1F1E24]">
+      {/* Header */}
+      <div className="px-4 sm:px-6 md:px-10 py-5 flex flex-col lg:flex-row justify-between gap-5">
+        {/* Left */}
+        <div className="flex items-center">
+          <button
             onClick={() => navigate(-1)}
-            className="hover:text-[#6556CD] ri-arrow-left-line"
-          ></i>{" "}
-          Trending
-        </h1>
-        <div className="flex items-center w-[80%]">
-          <Topnav />
+            className="text-3xl text-zinc-400 hover:text-[#6556CD] transition"
+          >
+            <i className="ri-arrow-left-line"></i>
+          </button>
+
+          <h1 className="ml-3 text-2xl font-semibold text-zinc-300">
+            Trending
+          </h1>
+        </div>
+
+        {/* Right */}
+        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 w-full lg:w-auto">
+          <div className="flex-1">
+            <Topnav />
+          </div>
+
           <Dropdown
             title="Category"
             options={["movie", "tv", "all"]}
-            func={(e) => setcategory(e.target.value)}
+            func={(e) => setCategory(e.target.value)}
           />
-          <div className="w-[2%]"></div>
+
           <Dropdown
             title="Duration"
-            options={["week", "day"]}
-            func={(e) => setduration(e.target.value)}
+            options={["day", "week"]}
+            func={(e) => setDuration(e.target.value)}
           />
         </div>
       </div>
 
+      {/* Trending Cards */}
       <InfiniteScroll
         dataLength={trending.length}
-        next={GetTrending}
+        next={getTrending}
         hasMore={hasMore}
-        loader={<h1>Loading...</h1>}
+        loader={
+          <h1 className="text-center text-white py-6 text-lg">Loading...</h1>
+        }
       >
         <Cards data={trending} title={category} />
       </InfiniteScroll>
     </div>
-  ) : (
-    <Loading />
   );
 };
 

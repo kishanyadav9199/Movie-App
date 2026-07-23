@@ -2,8 +2,12 @@ import loader from "/loader.gif";
 
 const Loading = () => {
   return (
-    <div className="w-screen h-screen flex justify-center items-center bg-black">
-      <img className="h-[50%] object-cover" src={loader} alt="" />
+    <div className="fixed inset-0 flex items-center justify-center bg-black z-50">
+      <img
+        src={loader}
+        alt="Loading..."
+        className="w-24 sm:w-32 md:w-40 lg:w-48 object-contain"
+      />
     </div>
   );
 };
