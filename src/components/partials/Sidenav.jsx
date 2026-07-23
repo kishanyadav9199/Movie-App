@@ -102,24 +102,22 @@ const Sidenav = () => {
         <hr className="my-8 border-zinc-700" />
 
         <nav>
-          <h2 className="text-lg font-semibold text-white mb-4">
-            Website Information
-          </h2>
+          <Link
+            to="/about"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-3 p-3 rounded-lg text-zinc-400 hover:bg-[#6556CD] hover:text-white"
+          >
+            <i className="mr-2 ri-information-fill"></i>
+            About Us
+          </Link>
 
           <div className="flex flex-col gap-2">
             <Link
+              to="/contact"
               onClick={() => setOpen(false)}
               className="flex items-center gap-3 p-3 rounded-lg text-zinc-400 hover:bg-[#6556CD] hover:text-white"
             >
-              <i className="ri-information-fill"></i>
-              About MovieZone
-            </Link>
-
-            <Link
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-3 p-3 rounded-lg text-zinc-400 hover:bg-[#6556CD] hover:text-white"
-            >
-              <i className="ri-phone-fill"></i>
+              <i className="mr-2 ri-phone-fill"></i>
               Contact Us
             </Link>
           </div>

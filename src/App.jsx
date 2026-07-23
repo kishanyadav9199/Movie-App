@@ -14,6 +14,9 @@ import PersonDetails from "./components/PersonDetails";
 import Trailer from "./components/partials/Trailer";
 import NotFound from "./components/NotFound";
 
+import About from "./components/About";
+import Contact from "./components/Contact";
+
 const App = () => {
   return (
     <div className="min-h-screen w-full bg-[#1F1E24]">
@@ -25,6 +28,8 @@ const App = () => {
         <Route path="/movie" element={<Movie />} />
         <Route path="/tv" element={<Tvshows />} />
         <Route path="/person" element={<People />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
 
         {/* Movie */}
         <Route path="/movie/details/:id" element={<Moviedetails />}>
