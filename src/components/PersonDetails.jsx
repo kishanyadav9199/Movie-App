@@ -11,7 +11,6 @@ const PersonDetails = () => {
 
   const navigate = useNavigate();
   const { id } = useParams();
-
   const dispatch = useDispatch();
 
   const { info } = useSelector((state) => state.person);
@@ -26,16 +25,22 @@ const PersonDetails = () => {
     };
   }, [dispatch, id]);
 
-  if (!info) return <Loading />;
+  if (!info) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#1F1E24]">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen w-full bg-[#1F1E24] px-4 sm:px-8 lg:px-16 py-6">
+    <div className="min-h-screen w-full bg-[#1F1E24] px-4 sm:px-6 md:px-10 lg:px-16 xl:px-20 py-6">
       {/* ================= Navigation ================= */}
 
       <nav className="flex items-center mb-8">
         <button
           onClick={() => navigate(-1)}
-          className="text-3xl text-white hover:text-[#6556CD] transition"
+          className="text-2xl md:text-3xl text-white hover:text-[#6556CD] duration-300"
         >
           <i className="ri-arrow-left-line"></i>
         </button>
@@ -43,29 +48,33 @@ const PersonDetails = () => {
 
       {/* ================= Main Layout ================= */}
 
-      <div className="flex flex-col lg:flex-row gap-10">
+      <div className="flex flex-col xl:flex-row gap-10">
         {/* ================= Left Section ================= */}
 
-        <div className="w-full lg:w-1/4">
+        <div className="w-full xl:w-1/4 flex flex-col">
           {/* Poster */}
 
           <img
-            className="w-full max-w-[320px] mx-auto rounded-xl shadow-2xl object-cover"
-            src={`https://image.tmdb.org/t/p/original/${info.detail.profile_path}`}
-            alt={info.detail.name}
+            src={
+              info.detail?.profile_path
+                ? `https://image.tmdb.org/t/p/w500${info.detail.profile_path}`
+                : "/noimage.jpeg"
+            }
+            alt={info.detail?.name}
+            className="w-60 sm:w-72 md:w-80 xl:w-full mx-auto rounded-2xl object-cover shadow-2xl hover:scale-[1.02] duration-300"
           />
 
-          <hr className="my-8 border-zinc-700" />
+          <hr className="border-zinc-700 my-8" />
 
-          {/* Social Links */}
+          {/* ================= Social Links ================= */}
 
-          <div className="flex flex-wrap justify-center lg:justify-start gap-5 text-3xl text-white">
+          <div className="flex justify-center xl:justify-start flex-wrap gap-5 text-3xl text-white">
             {info.externalid?.wikidata_id && (
               <a
                 href={`https://www.wikidata.org/wiki/${info.externalid.wikidata_id}`}
                 target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-[#6556CD]"
+                rel="noreferrer"
+                className="hover:text-[#6556CD] duration-300"
               >
                 <i className="ri-earth-fill"></i>
               </a>
@@ -73,10 +82,10 @@ const PersonDetails = () => {
 
             {info.externalid?.facebook_id && (
               <a
-                href={`https://www.facebook.com/${info.externalid.facebook_id}`}
+                href={`https://facebook.com/${info.externalid.facebook_id}`}
                 target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-[#6556CD]"
+                rel="noreferrer"
+                className="hover:text-[#6556CD] duration-300"
               >
                 <i className="ri-facebook-circle-fill"></i>
               </a>
@@ -84,10 +93,10 @@ const PersonDetails = () => {
 
             {info.externalid?.instagram_id && (
               <a
-                href={`https://www.instagram.com/${info.externalid.instagram_id}`}
+                href={`https://instagram.com/${info.externalid.instagram_id}`}
                 target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-[#6556CD]"
+                rel="noreferrer"
+                className="hover:text-pink-500 duration-300"
               >
                 <i className="ri-instagram-fill"></i>
               </a>
@@ -97,101 +106,102 @@ const PersonDetails = () => {
               <a
                 href={`https://twitter.com/${info.externalid.twitter_id}`}
                 target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-[#6556CD]"
+                rel="noreferrer"
+                className="hover:text-sky-400 duration-300"
               >
                 <i className="ri-twitter-x-fill"></i>
               </a>
             )}
           </div>
 
-          {/* Personal Info */}
+          {/* ================= Personal Information ================= */}
 
-          <div className="mt-8">
+          <div className="mt-10">
             <h2 className="text-2xl font-bold text-white mb-6">
               Personal Information
             </h2>
 
-            <div className="space-y-5 text-zinc-300">
+            <div className="space-y-6 text-zinc-300">
               <div>
-                <h3 className="font-semibold text-white">Known For</h3>
-                <p>{info.detail.known_for_department}</p>
+                <h3 className="text-white font-semibold">Known For</h3>
+                <p>{info.detail?.known_for_department || "Unknown"}</p>
               </div>
 
               <div>
-                <h3 className="font-semibold text-white">Gender</h3>
+                <h3 className="text-white font-semibold">Gender</h3>
 
                 <p>
-                  {info.detail.gender === 2
+                  {info.detail?.gender === 2
                     ? "Male"
-                    : info.detail.gender === 1
+                    : info.detail?.gender === 1
                       ? "Female"
                       : "Not Specified"}
                 </p>
               </div>
 
               <div>
-                <h3 className="font-semibold text-white">Birthday</h3>
+                <h3 className="text-white font-semibold">Birthday</h3>
 
-                <p>{info.detail.birthday || "Unknown"}</p>
+                <p>{info.detail?.birthday || "Unknown"}</p>
               </div>
 
               <div>
-                <h3 className="font-semibold text-white">Deathday</h3>
+                <h3 className="text-white font-semibold">Deathday</h3>
 
-                <p>{info.detail.deathday || "Still Alive"}</p>
+                <p>{info.detail?.deathday || "Still Alive"}</p>
               </div>
 
               <div>
-                <h3 className="font-semibold text-white">Place of Birth</h3>
+                <h3 className="text-white font-semibold">Place of Birth</h3>
 
-                <p>{info.detail.place_of_birth || "Unknown"}</p>
+                <p>{info.detail?.place_of_birth || "Unknown"}</p>
               </div>
 
               <div>
-                <h3 className="font-semibold text-white">Also Known As</h3>
+                <h3 className="text-white font-semibold">Also Known As</h3>
 
                 <p className="leading-7">
-                  {info.detail.also_known_as?.join(", ")}
+                  {info.detail?.also_known_as?.length
+                    ? info.detail.also_known_as.join(", ")
+                    : "N/A"}
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* ================= Right Section Starts ================= */}
+        {/* ================= Right Section ================= */}
 
-        <div className="flex-1">
-          {/* Person Name */}
-          <h1 className="text-3xl sm:text-4xl lg:text-6xl font-black text-white mb-6">
-            {info.detail.name}
+        <div className="flex-1 min-w-0">
+          {/* Name */}
+
+          <h1 className="text-4xl sm:text-5xl xl:text-6xl font-black text-white leading-tight mb-6">
+            {info.detail?.name}
           </h1>
 
           {/* Biography */}
-          <div className="mb-10">
-            <h2 className="text-2xl font-semibold text-white mb-4">
-              Biography
-            </h2>
 
-            <p className="text-zinc-300 leading-8 whitespace-pre-line">
-              {info.detail.biography || "Biography not available."}
+          <div className="mb-10">
+            <h2 className="text-2xl font-bold text-white mb-4">Biography</h2>
+
+            <p className="text-zinc-300 text-sm sm:text-base leading-8 text-justify whitespace-pre-line">
+              {info.detail?.biography || "Biography not available."}
             </p>
           </div>
 
-          {/* Known For */}
+          {/* ================= Known For ================= */}
+
           <div className="mb-10">
-            <h2 className="text-2xl font-semibold text-white mb-4">
-              Known For
-            </h2>
+            <h2 className="text-2xl font-bold text-white mb-5">Known For</h2>
 
-            <HorizontalCards data={info.combinedCredits?.cast || []} />
+            <div className="overflow-hidden rounded-xl">
+              <HorizontalCards data={info.combinedCredits?.cast || []} />
+            </div>
           </div>
+          {/* ================= Acting Credits ================= */}
 
-          {/* Acting Header */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-5">
-            <h2 className="text-2xl font-semibold text-white">
-              Acting Credits
-            </h2>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <h2 className="text-2xl font-bold text-white">Acting Credits</h2>
 
             <Dropdown
               title="Category"
@@ -200,50 +210,85 @@ const PersonDetails = () => {
             />
           </div>
 
-          {/* Acting List */}
-          <div className="max-h-[500px] overflow-y-auto rounded-xl border border-zinc-700 bg-[#18181B] shadow-lg">
-            {info[`${category}Credits`]?.cast?.length > 0 ? (
-              <ul>
-                {info[`${category}Credits`].cast.map((credit, index) => (
+          {/* ================= Credits List ================= */}
+
+          <div className="bg-[#18181B] border border-zinc-700 rounded-2xl shadow-xl overflow-hidden">
+            {info?.[`${category}Credits`]?.cast?.length ? (
+              <ul className="max-h-[600px] overflow-y-auto">
+                {info[`${category}Credits`].cast.map((credit) => (
                   <li
-                    key={index}
+                    key={credit.id}
                     className="border-b border-zinc-700 last:border-none"
                   >
                     <Link
                       to={`/${category}/details/${credit.id}`}
-                      className="block p-4 hover:bg-[#24242C] transition"
+                      className="block p-4 sm:p-5 hover:bg-[#24242C] duration-300"
                     >
-                      <h3 className="text-white font-semibold text-lg">
-                        {credit.name ||
-                          credit.title ||
-                          credit.original_name ||
-                          credit.original_title}
-                      </h3>
+                      <div className="flex flex-col sm:flex-row gap-4">
+                        {/* Poster */}
 
-                      {credit.character && (
-                        <p className="text-zinc-400 mt-1 text-sm">
-                          Character: {credit.character}
-                        </p>
-                      )}
+                        <img
+                          src={
+                            credit.poster_path
+                              ? `https://image.tmdb.org/t/p/w300${credit.poster_path}`
+                              : "/noimage.jpeg"
+                          }
+                          alt={credit.title || credit.name || "Poster"}
+                          className="w-24 h-36 rounded-lg object-cover shadow-lg mx-auto sm:mx-0"
+                        />
 
-                      {credit.release_date && (
-                        <p className="text-zinc-500 text-sm mt-1">
-                          Release: {credit.release_date}
-                        </p>
-                      )}
+                        {/* Details */}
 
-                      {credit.first_air_date && (
-                        <p className="text-zinc-500 text-sm mt-1">
-                          First Air Date: {credit.first_air_date}
-                        </p>
-                      )}
+                        <div className="flex-1">
+                          <h3 className="text-lg sm:text-xl font-semibold text-white">
+                            {credit.title ||
+                              credit.name ||
+                              credit.original_title ||
+                              credit.original_name}
+                          </h3>
+
+                          {credit.character && (
+                            <p className="text-zinc-400 mt-2">
+                              <span className="text-white font-medium">
+                                Character:
+                              </span>{" "}
+                              {credit.character}
+                            </p>
+                          )}
+
+                          {(credit.release_date || credit.first_air_date) && (
+                            <p className="text-zinc-500 mt-2">
+                              <span className="text-white font-medium">
+                                Released:
+                              </span>{" "}
+                              {credit.release_date || credit.first_air_date}
+                            </p>
+                          )}
+
+                          {credit.vote_average > 0 && (
+                            <div className="mt-3 flex items-center gap-2">
+                              <div className="flex items-center gap-1 bg-yellow-500 text-black px-3 py-1 rounded-full text-sm font-semibold">
+                                <i className="ri-star-fill"></i>
+
+                                {credit.vote_average.toFixed(1)}
+                              </div>
+                            </div>
+                          )}
+
+                          {credit.overview && (
+                            <p className="text-zinc-400 mt-4 text-sm leading-6 line-clamp-3">
+                              {credit.overview}
+                            </p>
+                          )}
+                        </div>
+                      </div>
                     </Link>
                   </li>
                 ))}
               </ul>
             ) : (
-              <div className="p-8 text-center text-zinc-400">
-                No credits available.
+              <div className="flex items-center justify-center h-48 text-zinc-400 text-lg">
+                No Acting Credits Available.
               </div>
             )}
           </div>
